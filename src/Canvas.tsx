@@ -1,27 +1,32 @@
 import React from "react";
 
 type CanvasProps = {
-  strokeStyle: string,
-  lineWidth: number,
-}
+  strokeStyle: string;
+  lineWidth: number;
+};
+
+type PrepareEvent = {
+  type: string;
+  listener: EventListener;
+  options?: boolean | AddEventListenerOptions;
+};
 
 class Canvas extends React.Component<CanvasProps> {
-
   private canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef();
   private canvas!: HTMLCanvasElement;
   private ctx!: CanvasRenderingContext2D;
-  
+
   private prevX: number = 0;
   private currX: number = 0;
   private prevY: number = 0;
   private currY: number = 0;
+  private isMouseDown: boolean = false;
 
-  findxy = (action: string, evt: MouseEvent) => {
+  updatexy = ({ clientX, clientY }: MouseEvent) => {
     this.prevX = this.currX;
     this.prevY = this.currY;
-    this.currX = evt.clientX - this.canvas.offsetLeft;
-    this.currY = evt.clientY - this.canvas.offsetTop;
-    this.draw();
+    this.currX = clientX - this.canvas.offsetLeft;
+    this.currY = clientY - this.canvas.offsetTop;
   };
 
   draw = () => {
@@ -34,11 +39,48 @@ class Canvas extends React.Component<CanvasProps> {
     this.ctx.closePath();
   };
 
+  canvasEvents: PrepareEvent[] = [
+    {
+      // start draw
+      type: "mousedown",
+      listener: (evt: Event): void => {
+        this.isMouseDown = true;
+      },
+      options: false
+    },
+    {
+      // stop draw
+      type: "mouseup",
+      listener: (evt: Event): void => {
+        this.isMouseDown = false;
+      },
+      options: false
+    },
+    {
+      // draw
+      type: "mousemove",
+      listener: (evt: Event): void => {
+        this.updatexy(evt as MouseEvent);
+        if (this.isMouseDown) {
+          this.draw();
+        }
+      },
+      options: false
+    },
+    {
+      // stop drawing if mouse is out
+      type: "mouseout",
+      listener: (evt: Event): void => {
+        this.isMouseDown = false;
+      },
+      options: false
+    }
+  ];
+
   addListeners = (): void => {
-    this.canvas.addEventListener("mousemove", (evt: MouseEvent) => { this.findxy("move", evt) }, false);
-    // canvas.addEventListener("mousedown", , false);
-    // canvas.addEventListener("mouseup", , false);
-    // canvas.addEventListener("mouseout", , false);
+    this.canvasEvents.forEach(({ type, listener, options }) => {
+      this.canvas.addEventListener(type, listener, options);
+    });
   };
 
   componentDidMount() {
@@ -47,24 +89,21 @@ class Canvas extends React.Component<CanvasProps> {
     this.ctx.font = "40px Courier";
     this.ctx.fillText("shake that mouse!", 210, 75);
     this.addListeners();
-  };
+  }
 
   componentWillUnmount() {
-    // this.removeListeners();
-  };
+    this.canvasEvents.forEach(({ type, listener }) => {
+      this.canvas.removeEventListener(type, listener);
+    });
+  }
 
   render() {
     return (
-      <div style={{border: "1px gray solid"}}>
-        <canvas 
-          ref={this.canvasRef} 
-          width={640} 
-          height={360}
-          
-        />
+      <div style={{ border: "1px gray solid" }}>
+        <canvas ref={this.canvasRef} width={640} height={360} />
       </div>
     );
-  };
-};
+  }
+}
 
-export default Canvas
+export default Canvas;
