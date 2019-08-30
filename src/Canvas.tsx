@@ -11,6 +11,11 @@ type PrepareEvent = {
   options?: boolean | AddEventListenerOptions;
 };
 
+const CANVAS_RESOLUTION = {
+  width: 640,
+  height: 360
+};
+
 class Canvas extends React.Component<CanvasProps> {
   private canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef();
   private canvas!: HTMLCanvasElement;
@@ -87,7 +92,7 @@ class Canvas extends React.Component<CanvasProps> {
     this.canvas = this.canvasRef.current!;
     this.ctx = this.canvas.getContext("2d")!;
     this.ctx.font = "40px Courier";
-    this.ctx.fillText("shake that mouse!", 210, 75);
+    this.ctx.fillText("drag that mouse!", 210, 75);
     this.addListeners();
   }
 
@@ -100,7 +105,11 @@ class Canvas extends React.Component<CanvasProps> {
   render() {
     return (
       <div style={{ border: "1px gray solid" }}>
-        <canvas ref={this.canvasRef} width={640} height={360} />
+        <canvas
+          ref={this.canvasRef}
+          width={CANVAS_RESOLUTION.width}
+          height={CANVAS_RESOLUTION.height}
+        />
       </div>
     );
   }
