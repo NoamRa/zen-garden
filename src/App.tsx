@@ -2,14 +2,14 @@ import React from "react";
 import Canvas from "./Canvas";
 
 type AppState = {
-  strokeStyle: string,
-  lineWidth: number,
-}
+  strokeStyle: string;
+  lineWidth: number;
+};
 
 class App extends React.Component<{}, AppState> {
   initState = (): AppState => ({
     strokeStyle: "black",
-    lineWidth: 2,
+    lineWidth: 2
   });
 
   state = this.initState();
@@ -23,17 +23,14 @@ class App extends React.Component<{}, AppState> {
   };
 
   render(): JSX.Element {
-    const {
-      strokeStyle,
-      lineWidth
-    } = this.state;
+    const { strokeStyle, lineWidth } = this.state;
 
     return (
-      <div 
+      <div
         style={{
           display: "flex",
           justifyContent: "center",
-          flexDirection: "column",
+          flexDirection: "column"
         }}
       >
         <div
@@ -41,12 +38,12 @@ class App extends React.Component<{}, AppState> {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            flexDirection: "column",
+            flexDirection: "column"
           }}
         >
           <React.Fragment>
             <label htmlFor="strokeStyle">stroke color</label>
-            <input 
+            <input
               type="color"
               value={strokeStyle}
               name="strokeStyle"
@@ -55,31 +52,28 @@ class App extends React.Component<{}, AppState> {
           </React.Fragment>
           <React.Fragment>
             <label htmlFor="lineWidth">stroke width</label>
-            <input 
+            <input
               type="range"
               value={lineWidth}
-              min="1" 
+              min="1"
               max="10"
               name="lineWidth"
               onChange={this.handleLineWidth}
             />
           </React.Fragment>
         </div>
-        
+
         <div
           style={{
             display: "flex",
-            justifyContent: "center",
+            justifyContent: "center"
           }}
         >
-          <Canvas
-            strokeStyle={strokeStyle}
-            lineWidth={lineWidth}
-          />
+          <Canvas strokeStyle={strokeStyle} lineWidth={lineWidth} />
         </div>
       </div>
     );
   }
-};
+}
 
 export default App;

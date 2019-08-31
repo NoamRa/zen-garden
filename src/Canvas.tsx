@@ -1,4 +1,6 @@
 import React from "react";
+import Rake from "./Rake";
+import { renderToString } from "react-dom/server";
 
 type CanvasProps = {
   strokeStyle: string;
@@ -102,13 +104,29 @@ class Canvas extends React.Component<CanvasProps> {
     });
   }
 
+  cursorString = (degrees: number) => {
+    const rakeString = renderToString(
+      <Rake width={26} height={26} rotation={degrees} />
+    );
+
+    return rakeString;
+  };
+
   render() {
     return (
-      <div style={{ border: "1px gray solid" }}>
+      <div
+        style={{
+          border: "1px gray solid"
+        }}
+      >
         <canvas
           ref={this.canvasRef}
           width={CANVAS_RESOLUTION.width}
           height={CANVAS_RESOLUTION.height}
+          style={{
+            color: "red",
+            cursor: `url('data:image/svg+xml;utf8,${this.cursorString(45)}') 26 0, auto`
+          }}
         />
       </div>
     );
